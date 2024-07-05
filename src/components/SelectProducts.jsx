@@ -10,9 +10,10 @@ import {
   useDisclosure,
   Checkbox,
 } from "@chakra-ui/react";
+import { HiViewGridAdd } from "react-icons/hi";
 import React, { useContext, useState } from "react";
 import { productsContext } from "../context/product.context";
-
+import { MdEdit } from "react-icons/md";
 export const SelectProducts = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
@@ -58,11 +59,10 @@ export const SelectProducts = () => {
 
   const { setAllSelectedProducts, allSelectedProducts } =
     useContext(productsContext);
+
+  const [selectedProducts, setSelectedProduct] = useState([]);
   const handleProductChange = (product_id, isChecked) => {
-    setAllSelectedProducts((prev) => {
-      return prev.filter((p) => p.product_name !== undefined);
-    });
-    setAllSelectedProducts((prev) => {
+    setSelectedProduct((prev) => {
       if (isChecked) {
         const product = products.find((p) => p.product_id === product_id);
         const variants = product.variants.map(
@@ -76,15 +76,11 @@ export const SelectProducts = () => {
         return prev.filter((p) => p.product_id !== product_id);
       }
     });
-
     console.log(allSelectedProducts);
   };
 
   const handleVariantChange = (product_id, variant_id, isChecked) => {
-    setAllSelectedProducts((prev) => {
-      return prev.filter((p) => p.product_name !== undefined);
-    });
-    setAllSelectedProducts((prev) => {
+    setSelectedProduct((prev) => {
       const productIndex = prev.findIndex((p) => p.product_id === product_id);
       if (productIndex > -1) {
         const newVariants = isChecked
@@ -109,13 +105,13 @@ export const SelectProducts = () => {
         ];
       }
     });
-    console.log(allSelectedProducts);
+    console.log(selectedProducts);
   };
 
   return (
     <>
-      <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
-        Add
+      <Button ref={btnRef} onClick={onOpen}>
+        {<MdEdit size={20} />}
       </Button>
       <Drawer
         isOpen={isOpen}
@@ -127,27 +123,49 @@ export const SelectProducts = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Add Product</DrawerHeader>
+          <DrawerHeader className="border-b border-gray-300">
+            <div className="flex items-center gap-2">
+              <HiViewGridAdd />
+              Add Product
+            </div>
+          </DrawerHeader>
           <DrawerBody>
             {products.map((product) => (
-              <div key={product.product_id}>
+              <div
+                className="border-b border-gray-300 "
+                key={product.product_id}
+              >
                 <div>
                   <Checkbox
-                    isChecked={allSelectedProducts.some(
+                    isChecked={selectedProducts.some(
                       (p) => p.product_id === product.product_id
                     )}
                     onChange={(e) =>
                       handleProductChange(product.product_id, e.target.checked)
                     }
                   >
-                    {product.product_name}
+                    {" "}
+                    <div className="flex items-center ">
+                      <span className=" ">
+                        <img
+                          className="w-14"
+                          src={product.product_image}
+                          alt="image"
+                        />
+                      </span>
+                      <span className="text-xl font-semibold">
+                        {" "}
+                        {product.product_name}
+                      </span>
+                    </div>
                   </Checkbox>
                 </div>
                 <div className="px-6">
                   {product.variants.map((item) => (
                     <div key={item.variant_id}>
                       <Checkbox
-                        isChecked={allSelectedProducts.some(
+                        className="text-2xl font-semibold "
+                        isChecked={selectedProducts.some(
                           (p) =>
                             p.product_id === product.product_id &&
                             p.variants.includes(item.variant_name)
@@ -160,7 +178,11 @@ export const SelectProducts = () => {
                           )
                         }
                       >
-                        {item.variant_name} <span> $ {item.variant_price}</span>
+                        {item.variant_name}{" "}
+                        <span className="text-xl font-semibold ">
+                          {" "}
+                          $ {item.variant_price}{" "}
+                        </span>
                       </Checkbox>
                     </div>
                   ))}
@@ -172,7 +194,33 @@ export const SelectProducts = () => {
             <Button variant="outline" mr={3} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme="blue">Save</Button>
+            <Button
+              onClick={() => {
+                setAllSelectedProducts((prev) => {
+                  return prev.filter((p) => p.product_name !== undefined);
+                });
+                setAllSelectedProducts((prev) => {
+                  console.log("asdfasd", prev, selectedProducts);
+
+                  const filteredSelectedProducts = selectedProducts.filter(
+                    (selectedProduct) => {
+                      return !prev.some(
+                        (existingProduct) =>
+                          existingProduct.product_id ===
+                          selectedProduct.product_id
+                      );
+                    }
+                  );
+
+                  return [...prev, ...filteredSelectedProducts];
+                });
+
+                onClose();
+              }}
+              colorScheme="blue"
+            >
+              Save
+            </Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
