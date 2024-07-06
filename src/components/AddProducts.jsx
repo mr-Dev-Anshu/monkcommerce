@@ -12,9 +12,10 @@ const AddProducts = () => {
   const { allSelectedProducts, setAllSelectedProducts } =
     useContext(productsContext);
 
-  const handleDiscount = () => {
-    setDiscount(!discount);
+  const handleDiscount = (index) => {
+    setDiscount(index);
   };
+
   const handleAddProduct = () => {
     if (allSelectedProducts.length === 4) {
       setMessage("You can't add More products");
@@ -73,17 +74,17 @@ const AddProducts = () => {
                   <SelectProducts />
                 </span>
               </div>
-              {discount ? (
+              {discount === index  ? (
                 <div className="flex items-center gap-2 ">
                   <Discount />
-                  <span className="cursor-pointer" onClick={handleDiscount}>
+                  <span className="cursor-pointer" onClick={()=>handleDiscount(null)}>
                     {" "}
                     <ImCross />
                   </span>
                 </div>
               ) : (
                 <div
-                  onClick={handleDiscount}
+                  onClick={ ()=>handleDiscount(index)}
                   className="bg-[#007555] text-white cursor-pointer col-span-1 md:px-12 flex items-center justify-center rounded-md"
                 >
                   Add Discount
