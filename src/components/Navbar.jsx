@@ -60,10 +60,7 @@ export const Navbar = () => {
                 </p>
               </div>
               <div class="justify-between items-center pt-0 space-y-4 sm:flex sm:space-y-0">
-                <a
-                  href="#"
-                  class="font-medium text-primary-600 dark:text-primary-500 hover:underline"
-                ></a>
+               
                 <div class="items-center space-y-4 sm:space-x-4 sm:flex sm:space-y-0">
                   <button
                     onClick={() => setToggle(!toggle)}
