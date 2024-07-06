@@ -1,3 +1,4 @@
+import { Link } from "@chakra-ui/layout";
 import { useState } from "react";
 
 export const Navbar = () => {
@@ -8,29 +9,23 @@ export const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <div className="shrink-0 flex items-center">
-              <a href="/" className="text-2xl font-bold text-gray-900">
+              <p  className="text-2xl font-bold text-gray-900">
                 MONKCOMMERCE
-              </a>
+              </p>
             </div>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
-              <a
-                href="#"
-                className="text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Home
-              </a>
-              <a
+              <Link
                 href="https://www.linkedin.com/in/anshu-pandey-b08860258/"
                 className="text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
               >
                 About
-              </a>
-              <a
+              </Link>
+              <Link
                 href="https://github.com/mr-Dev-Anshu/monkcommerce"
                 className="text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
               >
                 Git Repo
-              </a>
+              </Link>
               <p
                 onClick={() => setToggle(!toggle)}
                 className="text-gray-900 cursor-pointer  hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"

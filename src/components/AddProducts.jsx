@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext,  useState } from "react";
 import { SelectProducts } from "./SelectProducts";
 import { productsContext } from "../context/product.context";
 import { ImCross } from "react-icons/im";

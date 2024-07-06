@@ -133,7 +133,7 @@ export const SelectProducts = () => {
                         <img
                           className="w-14 h-14"
                           src={product.product_image}
-                          alt="image"
+                          alt="asdfasdf"
                         />
                       </span>
                       <span className="text-xl font-semibold">
