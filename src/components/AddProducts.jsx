@@ -1,17 +1,22 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SelectProducts } from "./SelectProducts";
 import { productsContext } from "../context/product.context";
 import { ImCross } from "react-icons/im";
 import { RiGridFill } from "react-icons/ri";
+import Discount from "./Discount";
 const AddProducts = () => {
   const [addProduct, setAddProduct] = useState([{ value: "" }]);
   const [message, setMessage] = useState();
-  const [toggle, setToggle] = useState(false);
+  const [discount, setDiscount] = useState(false);
 
   const { allSelectedProducts, setAllSelectedProducts } =
     useContext(productsContext);
+
+  const handleDiscount = () => {
+    setDiscount(!discount);
+  };
   const handleAddProduct = () => {
-    if (addProduct.length === 4) {
+    if (allSelectedProducts.length === 4) {
       setMessage("You can't add More products");
       return;
     }
@@ -28,7 +33,9 @@ const AddProducts = () => {
   const handleDelete = (variant, index) => {
     setAllSelectedProducts((prev) => {
       const newProducts = [...prev];
-      const newVariants = newProducts[index].variants.filter((v) => v !== variant);
+      const newVariants = newProducts[index].variants.filter(
+        (v) => v !== variant
+      );
       if (newVariants.length === 0) {
         newProducts.splice(index, 1);
       } else {
@@ -49,7 +56,9 @@ const AddProducts = () => {
               className="w-full grid grid-cols-3 gap-2 md:w-[50%]"
             >
               <div className="md:col-span-2 flex">
-                <span className="text-xl  mx-2  flex items-center">{<RiGridFill/>}</span>
+                <span className="text-xl  mx-2  flex items-center">
+                  {<RiGridFill />}
+                </span>
                 <span className="text-xl  mx-2  flex items-center">
                   {index + 1}.
                 </span>
@@ -64,16 +73,32 @@ const AddProducts = () => {
                   <SelectProducts />
                 </span>
               </div>
-              <div className="bg-[#007555] text-white col-span-1 md:px-12 flex items-center justify-center rounded-md">
-                Add Discount
-              </div>
+              {discount ? (
+                <div className="flex items-center gap-2 ">
+                  <Discount />
+                  <span className="cursor-pointer" onClick={handleDiscount}>
+                    {" "}
+                    <ImCross />
+                  </span>
+                </div>
+              ) : (
+                <div
+                  onClick={handleDiscount}
+                  className="bg-[#007555] text-white cursor-pointer col-span-1 md:px-12 flex items-center justify-center rounded-md"
+                >
+                  Add Discount
+                </div>
+              )}
             </div>
-            {allSelectedProducts[index].variants?.map((item , i) => (
+            {allSelectedProducts[index].variants?.map((item, i) => (
               <div key={i} className="md:w-[40%] flex items-center gap-4  ">
                 <span className="border w-[90%] border-gray-400 rounded-lg px-4 py-2">
                   {item}
                 </span>
-                <span className="cursor-pointer hover:text-red-500" onClick={() => handleDelete(item, index)}>
+                <span
+                  className="cursor-pointer hover:text-red-500"
+                  onClick={() => handleDelete(item, index)}
+                >
                   {<ImCross size={20} />}{" "}
                 </span>
               </div>

@@ -9,58 +9,41 @@ import {
   Button,
   useDisclosure,
   Checkbox,
+  Input,
 } from "@chakra-ui/react";
 import { HiViewGridAdd } from "react-icons/hi";
 import React, { useContext, useState } from "react";
 import { productsContext } from "../context/product.context";
 import { MdEdit } from "react-icons/md";
+import { products } from "../constant/productsData";
+import { all } from "q";
+
 export const SelectProducts = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
-  const products = [
-    {
-      product_id: 1,
-      product_name: "Fog Linen Chambray Towel - Beige Stripe",
-      product_image:
-        "https://cdn11.bigcommerce.com/s-p1xcugzp89/products/77/images/266/foglinenbeigestripetowel1b.1647248662.386.513.jpg?c=1",
-      variants: [
-        {
-          variant_id: 1,
-          variant_name: "XS / Silver",
-          variant_price: "49",
-        },
-        {
-          variant_id: 2,
-          variant_name: "S / Silver",
-          variant_price: "49",
-        },
-        {
-          variant_id: 3,
-          variant_name: "M / Silver",
-          variant_price: "49",
-        },
-      ],
-    },
-    {
-      product_id: 2,
-      product_name: "Orbit Terrarium - Large",
-      product_image:
-        "https://cdn11.bigcommerce.com/s-p1xcugzp89/products/80/images/272/roundterrariumlarge.1647248662.386.513.jpg?c=1",
-      variants: [
-        {
-          variant_id: 4,
-          variant_name: "Default Title",
-          variant_price: "109",
-        },
-      ],
-    },
-  ];
-
   const { setAllSelectedProducts, allSelectedProducts } =
     useContext(productsContext);
-
   const [selectedProducts, setSelectedProduct] = useState([]);
+  const [search, setSearch] = useState();
+
+  const handleChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+  const filterProducts = (products, search) => {
+    if (!search) return products;
+    const lowerCaseSearch = search.toLowerCase();
+    return products.filter((product) => {
+      const productMatches = product.product_name
+        .toLowerCase()
+        .includes(lowerCaseSearch);
+      const variantsMatch = product.variants.some((variant) =>
+        variant.variant_name.toLowerCase().includes(lowerCaseSearch)
+      );
+      return productMatches || variantsMatch;
+    });
+  };
   const handleProductChange = (product_id, isChecked) => {
     setSelectedProduct((prev) => {
       if (isChecked) {
@@ -79,13 +62,13 @@ export const SelectProducts = () => {
     console.log(allSelectedProducts);
   };
 
-  const handleVariantChange = (product_id, variant_id, isChecked) => {
+  const handleVariantChange = (product_id, variant_name, isChecked) => {
     setSelectedProduct((prev) => {
       const productIndex = prev.findIndex((p) => p.product_id === product_id);
       if (productIndex > -1) {
         const newVariants = isChecked
-          ? [...prev[productIndex].variants, variant_id]
-          : prev[productIndex].variants.filter((id) => id !== variant_id);
+          ? [...prev[productIndex].variants, variant_name]
+          : prev[productIndex].variants.filter((name) => name !== variant_name);
         if (newVariants.length === 0) {
           return prev.filter((p) => p.product_id !== product_id);
         } else {
@@ -100,7 +83,7 @@ export const SelectProducts = () => {
           {
             product_id,
             product_name: product.product_name,
-            variants: [variant_id],
+            variants: [variant_name],
           },
         ];
       }
@@ -130,9 +113,10 @@ export const SelectProducts = () => {
             </div>
           </DrawerHeader>
           <DrawerBody>
-            {products.map((product) => (
+            <Input placeholder="Search Products " onChange={handleChange} />
+            {filterProducts(products, search).map((product) => (
               <div
-                className="border-b border-gray-300 "
+                className="border-b border-gray-300"
                 key={product.product_id}
               >
                 <div>
@@ -144,17 +128,15 @@ export const SelectProducts = () => {
                       handleProductChange(product.product_id, e.target.checked)
                     }
                   >
-                    {" "}
-                    <div className="flex items-center ">
-                      <span className=" ">
+                    <div className="flex items-center">
+                      <span>
                         <img
-                          className="w-14"
+                          className="w-14 h-14"
                           src={product.product_image}
                           alt="image"
                         />
                       </span>
                       <span className="text-xl font-semibold">
-                        {" "}
                         {product.product_name}
                       </span>
                     </div>
@@ -164,7 +146,7 @@ export const SelectProducts = () => {
                   {product.variants.map((item) => (
                     <div key={item.variant_id}>
                       <Checkbox
-                        className="text-2xl font-semibold "
+                        className="text-2xl font-semibold"
                         isChecked={selectedProducts.some(
                           (p) =>
                             p.product_id === product.product_id &&
@@ -178,10 +160,9 @@ export const SelectProducts = () => {
                           )
                         }
                       >
-                        {item.variant_name}{" "}
-                        <span className="text-xl font-semibold ">
-                          {" "}
-                          $ {item.variant_price}{" "}
+                        {item.variant_name}
+                        <span className="text-xl font-semibold">
+                          $ {item.variant_price}
                         </span>
                       </Checkbox>
                     </div>
@@ -196,9 +177,15 @@ export const SelectProducts = () => {
             </Button>
             <Button
               onClick={() => {
+                if (selectedProducts.length > 4) {
+                  alert("You can't add more than 4 products ");
+                  return;
+                }
+
                 setAllSelectedProducts((prev) => {
                   return prev.filter((p) => p.product_name !== undefined);
                 });
+
                 setAllSelectedProducts((prev) => {
                   console.log("asdfasd", prev, selectedProducts);
 
