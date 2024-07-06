@@ -16,7 +16,7 @@ import React, { useContext, useState } from "react";
 import { productsContext } from "../context/product.context";
 import { MdEdit } from "react-icons/md";
 import { products } from "../constant/productsData";
-import { all } from "q";
+
 
 export const SelectProducts = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
